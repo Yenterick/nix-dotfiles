@@ -1,8 +1,16 @@
 { config, pkgs, inputs, ... }:
 
 {
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    grub = {
+      enable = true;
+      device = "nodev";
+      efiSupport = true;
+      enableCryptodisk = true;
+      theme = pkgs.sleek-grub-theme;
+    };
+    efi.canTouchEfiVariables = true;
+  };
 
   programs.hyprland.enable = true;
   programs.zsh.enable = true;

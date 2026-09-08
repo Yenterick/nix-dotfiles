@@ -9,6 +9,8 @@
 
     oh-my-zsh = {
       enable = true;
+      theme = "powerlevel10k/powerlevel10k";
+      custom = "${pkgs.zsh-powerlevel10k}/share/zsh";
       plugins = [ "git" "docker" ];
     };
 
@@ -39,5 +41,6 @@
     unzip
     lazydocker
     lazysql
+    zsh-powerlevel10k
   ];
 }
