@@ -7,7 +7,10 @@
     viAlias = true;
   };
 
-  home.file.".config/nvim".source = inputs.lazyvim-starter;
+  home.file.".config/nvim" = {
+    source = inputs.lazyvim-starter;
+    force = true;
+  };
 
   home.packages = with pkgs; [
     lazygit
