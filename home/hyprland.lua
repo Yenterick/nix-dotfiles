@@ -260,20 +260,25 @@ hl.device({
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
+hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen(0))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
--- hyprland-infinite-desktop: navigate / float windows on the infinite canvas
-hl.bind("CTRL + SUPER + right", hl.dsp.exec_cmd("echo right > /tmp/infinite-nav"))
-hl.bind("CTRL + SUPER + left",  hl.dsp.exec_cmd("echo left > /tmp/infinite-nav"))
-hl.bind(mainMod .. " + SPACE",  hl.dsp.window.float({ action = "toggle" }))
+-- hyprland-infinite-desktop: the daemon (autostarted above) reads the keyboard/mouse
+-- devices directly, so its shortcuts are fixed and NOT configured through hl.bind:
+--   Ctrl + Super + Left/Right   -> cycle focus between floating windows on the canvas
+--   Super + Alt + drag (LMB)    -> pan all floating windows together
+-- (the previous CTRL+SUPER+left/right binds here just wrote to a file nothing read;
+-- removed as dead code -- the daemon already handles that combo independently.)
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun"))
 
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))

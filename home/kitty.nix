@@ -10,8 +10,9 @@
     };
 
     settings = {
-      background_opacity = "0.95";
-      window_padding_width = 8;
+      background_opacity = "0.64";
+      background_blur = "0";
+      window_padding_width = 12;
     };
   };
 }
