@@ -9,6 +9,8 @@
       size = 12;
     };
 
+    themeFile = "Catppuccin-Mocha";
+
     settings = {
       background_opacity = "0.64";
       background_blur = "0";
