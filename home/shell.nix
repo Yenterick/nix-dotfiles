@@ -18,6 +18,8 @@
       ll = "ls -la";
       lg = "lazygit";
     };
+
+    initExtra = "[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh";
   };
 
   programs.git = {
@@ -25,7 +27,7 @@
     settings = {
       init.defaultBranch = "main";
       user.name = "Yenterick";
-      user.email = "yenterick@example.com";
+      user.email = "yenterick@gmail.com";
     };
   };
 
@@ -34,13 +36,6 @@
   };
 
   home.packages = with pkgs; [
-    fd
-    ripgrep
-    fzf
-    lazygit
-    unzip
-    lazydocker
-    lazysql
     zsh-powerlevel10k
   ];
 }

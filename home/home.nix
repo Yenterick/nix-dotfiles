@@ -6,6 +6,10 @@
     ./kitty.nix
     ./waybar.nix
     ./neovim.nix
+    ./cli-tools.nix
+    ./productivity.nix
+    ./dev-tools.nix
+    ./fun.nix
   ];
 
   home.username = "yenterick";
