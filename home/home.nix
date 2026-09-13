@@ -2,20 +2,20 @@
 
 {
   imports = [
-    ./shell.nix
-    ./kitty.nix
-    ./waybar.nix
-    ./neovim.nix
-    ./cli-tools.nix
-    ./productivity.nix
-    ./dev-tools.nix
-    ./fun.nix
-    ./theme.nix
-    ./desktop-apps.nix
-    ./desktop-utils.nix
-    ./spicetify.nix
-    ./wallpaper.nix
-    ./fastfetch.nix
+    ./core/shell.nix
+    ./desktop/kitty.nix
+    ./desktop/waybar.nix
+    ./editor/neovim.nix
+    ./apps/cli-tools.nix
+    ./apps/productivity.nix
+    ./apps/dev-tools.nix
+    ./apps/fun.nix
+    ./desktop/theme.nix
+    ./apps/desktop-apps.nix
+    ./desktop/desktop-utils.nix
+    ./apps/spicetify.nix
+    ./desktop/wallpaper.nix
+    ./apps/fastfetch.nix
   ];
 
   home.username = "yenterick";
@@ -31,7 +31,7 @@
     text = builtins.replaceStrings
       [ "@INFINITE_DESKTOP_V2@" ]
       [ "${../modules/patches/infinite-desktop-v2}" ]
-      (builtins.readFile ./hyprland.lua);
+      (builtins.readFile ./desktop/hyprland.lua);
   };
 
   programs.home-manager.enable = true;

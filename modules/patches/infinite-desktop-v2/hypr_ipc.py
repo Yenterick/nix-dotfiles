@@ -1,38 +1,67 @@
 #!/usr/bin/env python3
 
-import subprocess
 import json
+import os
+import socket
+import threading
 
 
-def _run(args, timeout=2):
-    return subprocess.run(["hyprctl"] + args, capture_output=True, text=True, timeout=timeout)
+def _socket_path():
+    runtime = os.environ.get('XDG_RUNTIME_DIR', f'/run/user/{os.getuid()}')
+    sig = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
+    return f'{runtime}/hypr/{sig}/.socket.sock'
+
+
+def _send(payload, timeout=2):
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    try:
+        s.connect(_socket_path())
+        s.sendall(payload.encode())
+        chunks = []
+        while True:
+            chunk = s.recv(65536)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        return b''.join(chunks)
+    finally:
+        s.close()
 
 
 def hyprctl_json(args, timeout=2):
-    r = _run(args + ["-j"], timeout=timeout)
-    return json.loads(r.stdout) if r.stdout.strip() else None
+    data = _send('j/' + '/'.join(args), timeout=timeout)
+    return json.loads(data) if data.strip() else None
 
 
 def dispatch(lua_expr, timeout=2):
-    return _run(["dispatch", lua_expr], timeout=timeout)
+    return _send(f'dispatch {lua_expr}', timeout=timeout)
 
 
 def dispatch_async(lua_expr):
-    subprocess.Popen(["hyprctl", "dispatch", lua_expr],
-                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    def run():
+        try:
+            _send(f'dispatch {lua_expr}', timeout=1)
+        except Exception:
+            pass
+    threading.Thread(target=run, daemon=True).start()
 
 
 def batch(lua_exprs, timeout=5):
-    cmd = " ; ".join(f"dispatch {e}" for e in lua_exprs)
-    return subprocess.run(["hyprctl", "--batch", cmd], capture_output=True, timeout=timeout)
+    cmd = '[[BATCH]]' + ' ; '.join(f'dispatch {e}' for e in lua_exprs)
+    return _send(cmd, timeout=timeout)
 
 
 def batch_async(lua_exprs):
     if not lua_exprs:
         return
-    cmd = " ; ".join(f"dispatch {e}" for e in lua_exprs)
-    subprocess.Popen(["hyprctl", "--batch", cmd],
-                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    cmd = '[[BATCH]]' + ' ; '.join(f'dispatch {e}' for e in lua_exprs)
+    def run():
+        try:
+            _send(cmd, timeout=1)
+        except Exception:
+            pass
+    threading.Thread(target=run, daemon=True).start()
 
 
 def toggle_floating_lua(address=None):

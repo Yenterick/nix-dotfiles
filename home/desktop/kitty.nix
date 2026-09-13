@@ -1,7 +1,7 @@
 { ... }:
 
 let
-  palette = import ./palette.nix;
+  palette = import ../core/palette.nix;
 in
 {
   programs.kitty = {

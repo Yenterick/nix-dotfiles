@@ -2,16 +2,16 @@
 
 {
   imports = [
-    ./modules/boot.nix
-    ./modules/desktop.nix
-    ./modules/gaming.nix
-    ./modules/hardware.nix
-    ./modules/locale.nix
-    ./modules/networking.nix
-    ./modules/nix-settings.nix
-    ./modules/packages.nix
-    ./modules/users.nix
-    ./modules/virtualisation.nix
+    ./modules/system/boot.nix
+    ./modules/system/hardware.nix
+    ./modules/system/locale.nix
+    ./modules/system/networking.nix
+    ./modules/system/nix-settings.nix
+    ./modules/system/packages.nix
+    ./modules/system/users.nix
+    ./modules/desktop/desktop.nix
+    ./modules/desktop/gaming.nix
+    ./modules/desktop/virtualisation.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

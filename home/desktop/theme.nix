@@ -1,7 +1,7 @@
 { pkgs, config, ... }:
 
 let
-  palette = import ./palette.nix;
+  palette = import ../core/palette.nix;
   inherit (config.lib.formats.rasi) mkLiteral;
 in
 {

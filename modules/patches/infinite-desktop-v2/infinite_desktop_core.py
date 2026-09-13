@@ -1,11 +1,11 @@
-import sys, struct, threading, time, subprocess, json, os
+import sys, struct, threading, time, os
 import fcntl
 import select
 import math
 from evdev import InputDevice, list_devices, ecodes
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from hypr_ipc import move_window_exact_lua, batch_async
+from hypr_ipc import move_window_exact_lua, batch_async, hyprctl_json
 
 speed = float(sys.argv[1]) if len(sys.argv) > 1 else 1.0
 
@@ -50,8 +50,7 @@ def read_inverted():
 
 def get_monitor_bounds():
     try:
-        r = subprocess.run(['hyprctl', 'monitors', '-j'], capture_output=True, text=True, timeout=0.1)
-        monitors = json.loads(r.stdout)
+        monitors = hyprctl_json(['monitors'], timeout=0.1)
         if monitors:
             for m in monitors:
                 if m.get('focused', False):
@@ -78,8 +77,7 @@ def get_monitor_bounds():
 
 def get_floating_windows(workspace_id):
     try:
-        r = subprocess.run(['hyprctl', 'clients', '-j'], capture_output=True, text=True, timeout=0.1)
-        clients = json.loads(r.stdout)
+        clients = hyprctl_json(['clients'], timeout=0.1) or []
         floating = []
         for w in clients:
             if w.get('floating') and w.get('workspace', {}).get('id') == workspace_id:
@@ -90,8 +88,7 @@ def get_floating_windows(workspace_id):
 
 def get_focused_window():
     try:
-        r = subprocess.run(['hyprctl', 'activewindow', '-j'], capture_output=True, text=True, timeout=0.1)
-        return json.loads(r.stdout)
+        return hyprctl_json(['activewindow'], timeout=0.1)
     except:
         return None
 
@@ -141,8 +138,7 @@ def pan_other_windows(excluded_addr, dx, dy, workspace_id):
 
 def get_monitor_center():
     try:
-        r = subprocess.run(['hyprctl', 'monitors', '-j'], capture_output=True, text=True, timeout=0.1)
-        monitors = json.loads(r.stdout)
+        monitors = hyprctl_json(['monitors'], timeout=0.1) or []
         for m in monitors:
             if m.get('focused', False):
                 return m['x'] + m['width'] // 2, m['y'] + m['height'] // 2
@@ -204,9 +200,7 @@ def monitor_window_drag():
                             pan_dy = -mouse_dy
 
                         if pan_dx != 0 or pan_dy != 0:
-                            r = subprocess.run(['hyprctl', 'activeworkspace', '-j'],
-                                             capture_output=True, text=True, timeout=0.1)
-                            ws = json.loads(r.stdout)
+                            ws = hyprctl_json(['activeworkspace'], timeout=0.1)
                             workspace_id = ws['id']
                             pan_other_windows(dragged_window_addr, int(pan_dx), int(pan_dy), workspace_id)
 
@@ -441,8 +435,8 @@ def device_manager():
 
 print("Precargando...", flush=True)
 try:
-    subprocess.run(['hyprctl', 'activeworkspace', '-j'], capture_output=True, text=True, timeout=0.5)
-    subprocess.run(['hyprctl', 'clients', '-j'], capture_output=True, text=True, timeout=0.5)
+    hyprctl_json(['activeworkspace'], timeout=0.5)
+    hyprctl_json(['clients'], timeout=0.5)
 except:
     pass
 
@@ -463,14 +457,15 @@ def get_cached_workspace_id():
     now = time.time()
     if _cached_workspace_id is None or (now - _last_workspace_check) > WORKSPACE_CACHE_TTL:
         try:
-            r = subprocess.run(['hyprctl', 'activeworkspace', '-j'],
-                               capture_output=True, text=True, timeout=0.1)
-            ws = json.loads(r.stdout)
+            ws = hyprctl_json(['activeworkspace'], timeout=0.1)
             _cached_workspace_id = ws['id']
             _last_workspace_check = now
         except:
             pass
     return _cached_workspace_id
+
+_pan_positions = None
+_pan_was_active = False
 
 while True:
     time.sleep(0.016)
@@ -483,28 +478,34 @@ while True:
         acc_y = 0.0
 
     if not active_drag:
+        _pan_positions = None
+        _pan_was_active = False
         continue
 
     idx = int(round(dx))
     idy = int(round(dy))
-
-    if idx == 0 and idy == 0:
-        continue
 
     try:
         workspace_id = get_cached_workspace_id()
         if workspace_id is None:
             continue
 
-        r = subprocess.run(['hyprctl', 'clients', '-j'], capture_output=True, text=True, timeout=0.1)
-        clients = json.loads(r.stdout)
+        if _pan_positions is None:
+            clients = hyprctl_json(['clients'], timeout=0.1) or []
+            _pan_positions = {
+                w['address']: list(w['at'])
+                for w in clients
+                if w.get('floating') and w.get('workspace', {}).get('id') == workspace_id
+            }
+
+        if idx == 0 and idy == 0:
+            continue
 
         exprs = []
-        for w in clients:
-            if w.get('floating') and w.get('workspace', {}).get('id') == workspace_id:
-                nx = w['at'][0] + idx
-                ny = w['at'][1] + idy
-                exprs.append(move_window_exact_lua(nx, ny, w['address']))
+        for addr, pos in _pan_positions.items():
+            pos[0] += idx
+            pos[1] += idy
+            exprs.append(move_window_exact_lua(pos[0], pos[1], addr))
 
         batch_async(exprs)
     except Exception as e:

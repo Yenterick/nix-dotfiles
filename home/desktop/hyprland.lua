@@ -271,6 +271,7 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen(0))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/floating_tile_toggle.py"))
 
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun"))
 

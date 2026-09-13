@@ -7,7 +7,7 @@
       device = "nodev";
       efiSupport = true;
       enableCryptodisk = true;
-      theme = pkgs.sleek-grub-theme.override { withStyle = "dark"; };
+      theme = pkgs.callPackage ../packages/crt-amber-grub-theme.nix { };
     };
     efi.canTouchEfiVariables = true;
   };

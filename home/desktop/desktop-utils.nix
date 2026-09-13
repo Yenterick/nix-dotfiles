@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  palette = import ./palette.nix;
+  palette = import ../core/palette.nix;
 in
 {
   services.mako = {
