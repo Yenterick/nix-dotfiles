@@ -277,27 +277,10 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind("Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 
-hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py left"))
-hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py right"))
-hl.bind(mainMod .. " + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py up"))
-hl.bind(mainMod .. " + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py down"))
-
-hl.bind(mainMod .. " + ALT + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py left"))
-hl.bind(mainMod .. " + ALT + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py right"))
-hl.bind(mainMod .. " + ALT + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py up"))
-hl.bind(mainMod .. " + ALT + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py down"))
-
-hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py left"),  { repeating = true })
-hl.bind(mainMod .. " + SHIFT + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py right"), { repeating = true })
-hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py up"),    { repeating = true })
-hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py down"),  { repeating = true })
-
-hl.bind(mainMod .. " + CTRL + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py left"),  { repeating = true })
-hl.bind(mainMod .. " + CTRL + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py right"), { repeating = true })
-hl.bind(mainMod .. " + CTRL + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py up"),    { repeating = true })
-hl.bind(mainMod .. " + CTRL + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py down"),  { repeating = true })
-
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/floating_tile_toggle.py"))
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
