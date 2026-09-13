@@ -4,6 +4,8 @@
   imports = [
     ./modules/boot.nix
     ./modules/desktop.nix
+    ./modules/gaming.nix
+    ./modules/hardware.nix
     ./modules/locale.nix
     ./modules/networking.nix
     ./modules/nix-settings.nix

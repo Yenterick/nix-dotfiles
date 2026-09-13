@@ -1,14 +1,17 @@
 { ... }:
 
+let
+  palette = import ./palette.nix;
+in
 {
   programs.waybar = {
     enable = true;
 
     style = ''
       * { font-family: "JetBrainsMono Nerd Font"; font-size: 13px; border: none; }
-      window#waybar { background: rgba(30,30,46,0.85); color: #cdd6f4; }
-      #workspaces button { padding: 0 8px; color: #7f849c; }
-      #workspaces button.active, #workspaces button.focused { color: #a6adc8; background: rgba(137,180,250,0.15); }
+      window#waybar { background: rgba(19,0,0,0.85); color: ${palette.foreground}; }
+      #workspaces button { padding: 0 8px; color: ${palette.color8}; }
+      #workspaces button.active, #workspaces button.focused { color: ${palette.foreground}; background: rgba(135,85,116,0.25); }
       #clock, #cpu, #memory, #network, #pulseaudio, #tray { padding: 0 10px; }
     '';
 

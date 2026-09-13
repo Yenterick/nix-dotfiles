@@ -1,9 +1,8 @@
 { pkgs, ... }:
 
 {
-  # General-purpose language toolchains: Python, a C compiler, Rust/Cargo.
   home.packages = with pkgs; [
-    python3
+    (python3.withPackages (ps: [ ps.evdev ]))
     gcc
     rustc
     cargo

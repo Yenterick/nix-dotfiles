@@ -50,7 +50,7 @@ local menu        = "hyprlauncher"
 --
 hl.on("hyprland.start", function ()
   hl.exec_cmd("dbus-update-activation-environment --systemd --all && systemctl --user start hyprland-session.target")
-  hl.exec_cmd("infinite-desktop")
+  hl.exec_cmd("python3 @INFINITE_DESKTOP_V2@/infinite_desktop_core.py 1.6 > /tmp/infinite-desktop.log 2>&1")
   hl.exec_cmd("waybar")
 end)
 
@@ -97,8 +97,8 @@ hl.config({
         border_size = 2,
 
         col = {
-            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = { colors = {"rgba(807293ee)", "rgba(875574ee)"}, angle = 45 },
+            inactive_border = "rgba(6e6660aa)",
         },
 
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
@@ -211,8 +211,8 @@ hl.config({
 
 hl.config({
     misc = {
-        force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
-        disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
+        force_default_wallpaper = 0,
+        disable_hyprland_logo   = true,
     },
 })
 
@@ -272,19 +272,32 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen(0))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
--- hyprland-infinite-desktop: the daemon (autostarted above) reads the keyboard/mouse
--- devices directly, so its shortcuts are fixed and NOT configured through hl.bind:
---   Ctrl + Super + Left/Right   -> cycle focus between floating windows on the canvas
---   Super + Alt + drag (LMB)    -> pan all floating windows together
--- (the previous CTRL+SUPER+left/right binds here just wrote to a file nothing read;
--- removed as dead code -- the daemon already handles that combo independently.)
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun"))
 
--- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+hl.bind("Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
+
+hl.bind(mainMod .. " + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py left"))
+hl.bind(mainMod .. " + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py right"))
+hl.bind(mainMod .. " + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py up"))
+hl.bind(mainMod .. " + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/navigate_windows.py down"))
+
+hl.bind(mainMod .. " + ALT + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py left"))
+hl.bind(mainMod .. " + ALT + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py right"))
+hl.bind(mainMod .. " + ALT + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py up"))
+hl.bind(mainMod .. " + ALT + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window_tiled.py down"))
+
+hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py left"),  { repeating = true })
+hl.bind(mainMod .. " + SHIFT + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py right"), { repeating = true })
+hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py up"),    { repeating = true })
+hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/move_window.py down"),  { repeating = true })
+
+hl.bind(mainMod .. " + CTRL + left",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py left"),  { repeating = true })
+hl.bind(mainMod .. " + CTRL + right", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py right"), { repeating = true })
+hl.bind(mainMod .. " + CTRL + up",    hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py up"),    { repeating = true })
+hl.bind(mainMod .. " + CTRL + down",  hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/resize_window.py down"),  { repeating = true })
+
+hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/floating_tile_toggle.py"))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
@@ -370,3 +383,12 @@ hl.window_rule({
     move  = "20 monitor_h-120",
     float = true,
 })
+
+do
+    local guiConfig = os.getenv("HOME") .. "/.config/hypr/hyprland-gui.lua"
+    local f = io.open(guiConfig, "r")
+    if f then
+        f:close()
+        dofile(guiConfig)
+    end
+end

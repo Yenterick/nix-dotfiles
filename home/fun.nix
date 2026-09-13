@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # Terminal joke/toy binaries.
   home.packages = with pkgs; [
     cowsay
     lolcat

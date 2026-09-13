@@ -1,7 +1,6 @@
 { pkgs, ... }:
 
 {
-  # General-purpose command-line utilities.
   home.packages = with pkgs; [
     fd
     ripgrep
@@ -13,10 +12,11 @@
     tlrc
     ncdu
     btop
-    fastfetch
     yazi
     lazygit
     lazydocker
     lazysql
+    brightnessctl
+    playerctl
   ];
 }

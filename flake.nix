@@ -9,8 +9,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    infinite-desktop.url = "github:imashk14/hyprland-infinite-desktop";
-
     hyprmod = {
       url = "github:BlueManCZ/hyprmod";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,6 +24,11 @@
     lazyvim-starter = {
       url = "github:LazyVim/starter";
       flake = false;
+    };
+
+    spicetify-nix = {
+      url = "github:MichaelPachec0/spicetify-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -52,9 +55,6 @@
             ./hosts/arsene.nix
             home-manager.nixosModules.home-manager
             home-manager-modules
-            ({ pkgs, ... }: {
-              environment.systemPackages = [ inputs.infinite-desktop.packages.${system}.default ];
-            })
           ];
         };
 
@@ -66,9 +66,6 @@
             ./hosts/satanael.nix
             home-manager.nixosModules.home-manager
             home-manager-modules
-            ({ pkgs, ... }: {
-              environment.systemPackages = [ inputs.infinite-desktop.packages.${system}.default ];
-            })
           ];
         };
       };

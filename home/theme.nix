@@ -1,7 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
+let
+  palette = import ./palette.nix;
+  inherit (config.lib.formats.rasi) mkLiteral;
+in
 {
-  # Dark mode everywhere: GTK, Qt, and rofi all follow one switch.
   gtk = {
     enable = true;
     theme = {
@@ -28,6 +31,22 @@
 
   programs.rofi = {
     enable = true;
-    theme = "Arc-Dark";
+    theme = {
+      "*" = {
+        background-color = mkLiteral palette.background;
+        foreground-color = mkLiteral palette.foreground;
+        border-color = mkLiteral palette.accent;
+      };
+      "window" = {
+        border = mkLiteral "2px";
+        border-color = mkLiteral palette.accent;
+        border-radius = mkLiteral "8px";
+        background-color = mkLiteral palette.background;
+      };
+      "element selected" = {
+        background-color = mkLiteral palette.accent;
+        text-color = mkLiteral palette.background;
+      };
+    };
   };
 }
