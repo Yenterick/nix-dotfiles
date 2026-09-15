@@ -1,0 +1,24 @@
+@import "colors.css";
+
+#battery {
+  margin: 4px 5px;
+  padding: 6px 16px;
+  background-color: @surface_container;
+  border: 2px solid alpha(@tertiary, 0.67);
+  border-radius: 0;
+  color: @secondary_fixed_dim;
+}
+
+#clock {
+  margin: 4px 5px;
+  padding: 6px 10px 6px 16px;
+  background-color: @surface_container;
+  border: 2px solid alpha(@tertiary, 0.67);
+  border-radius: 0;
+  color: @secondary_fixed_dim;
+}
+
+#battery:hover,
+#clock:hover {
+  border-image: linear-gradient(45deg, alpha(@tertiary_fixed, 0.93), alpha(@primary, 0.93)) 1;
+}

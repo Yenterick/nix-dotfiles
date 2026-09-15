@@ -1,0 +1,91 @@
+@import "colors.css";
+
+/*======= MODULE INDEPENDENT =======*/
+#distro-group {
+  margin: 4px 5px;
+  background-color: @surface_container;
+  border: 2px solid alpha(@tertiary, 0.67);
+  border-radius: 0;
+  color: @primary;
+}
+
+#distro-group:hover {
+  border-image: linear-gradient(45deg, alpha(@tertiary_fixed, 0.93), alpha(@primary, 0.93)) 1;
+}
+
+#custom-distro {
+  color: @primary;
+  padding: 6px 15px 6px 10px;
+}
+
+#custom-terminal {
+  color: @terminal_accent;
+  padding: 0px 10px;
+}
+
+#custom-obsidian {
+  color: @obsidian_accent;
+  padding: 0px 10px;
+}
+
+#custom-spotify {
+  color: @spotify_accent;
+  padding: 0px 10px;
+}
+
+#custom-browser {
+  color: @browser_accent;
+  padding: 0px 15px 0px 10px;
+}
+
+#idle_inhibitor {
+  margin: 4px 5px;
+  padding: 6px 15px 6px 10px;
+  background-color: @surface_container;
+  border: 2px solid alpha(@tertiary, 0.67);
+  border-radius: 0;
+  color: @secondary_fixed_dim;
+}
+
+#idle_inhibitor:hover {
+  border-image: linear-gradient(45deg, alpha(@tertiary_fixed, 0.93), alpha(@primary, 0.93)) 1;
+}
+
+/*======= MODULE CAPSUL =======*/
+#audio,
+#connections,
+#system,
+#storage {
+  margin: 4px 5px;
+  padding: 6px 6px;
+  background-color: @surface_container;
+  border: 2px solid alpha(@tertiary, 0.67);
+  border-radius: 0;
+  color: @secondary_fixed_dim;
+}
+
+#audio:hover,
+#connections:hover,
+#system:hover,
+#storage:hover {
+  border-image: linear-gradient(45deg, alpha(@tertiary_fixed, 0.93), alpha(@primary, 0.93)) 1;
+}
+
+#disk,
+#memory,
+#cpu,
+#temperature,
+#bluetooth {
+  margin-right: 2px;
+  padding: 0 8px;
+}
+
+#network {
+  padding: 0px 10px 0px 4px;
+}
+
+#pulseaudio {
+  margin-right: 12px;
+  margin-left: 8px;
+}
+

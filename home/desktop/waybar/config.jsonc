@@ -1,0 +1,38 @@
+/*
+ * Adapted from https://github.com/haikal-hakim/athena
+ */
+{
+  "layer": "top",
+  "height": 44,
+  "spacing": 6,
+  "margin-top": 8,
+  "margin-left": 5,
+  "margin-right": 5,
+  "include": [
+    "./modules/groups.jsonc",
+    "./modules/distro.jsonc",
+    "./modules/storage.jsonc",
+    "./modules/system.jsonc",
+    "./modules/workspace.jsonc",
+    "./modules/idle-inhibitor.jsonc",
+    "./modules/audio.jsonc",
+    "./modules/connections.jsonc",
+    "./modules/battery.jsonc",
+    "./modules/clock.jsonc"
+  ],
+  "modules-left": [
+    "group/distro-group",
+    "group/storage",
+    "group/system"
+  ],
+  "modules-center": [
+    "hyprland/workspaces",
+    "idle_inhibitor"
+  ],
+  "modules-right": [
+    "group/audio",
+    "group/connections",
+    "battery",
+    "clock"
+  ]
+}

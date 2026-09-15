@@ -22,6 +22,11 @@
     initContent = "[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh && fastfetch";
   };
 
+  home.file.".p10k.zsh" = {
+    force = true;
+    source = ./p10k.zsh;
+  };
+
   programs.git = {
     enable = true;
     settings = {

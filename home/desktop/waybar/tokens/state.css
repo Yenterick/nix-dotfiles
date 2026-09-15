@@ -1,0 +1,22 @@
+@import "colors.css";
+
+#battery.charging {
+  color: @success;
+}
+
+#idle_inhibitor.activated,
+#cpu.warning,
+#disk.warning,
+#memory.warning,
+#battery.warning:not(.charging) {
+  color: @warning;
+}
+
+#network.disabled,
+#cpu.critical,
+#disk.critical,
+#memory.critical,
+#temperature.critical,
+#battery.critical:not(.charging) {
+  color: @critical;
+}

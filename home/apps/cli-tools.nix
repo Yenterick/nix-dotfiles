@@ -9,6 +9,7 @@
     unzip
     bat
     eza
+    tree
     tlrc
     ncdu
     btop

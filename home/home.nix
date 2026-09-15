@@ -34,5 +34,10 @@
       (builtins.readFile ./desktop/hyprland.lua);
   };
 
+  home.file.".config/hypr/hyprland-gui.lua" = {
+    force = true;
+    source = ./desktop/hyprland-gui.lua;
+  };
+
   programs.home-manager.enable = true;
 }

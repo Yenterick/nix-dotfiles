@@ -1,0 +1,31 @@
+{
+  "hyprland/workspaces": {
+    "format": "{icon} {windows}",
+    "on-click": "activate",
+    "persistent-workspaces": {
+      "*": 10
+    },
+    "window-rewrite-default": "󰊠",
+    "window-rewrite": {
+      "kitty": "󰆍",
+      "zen": "",
+      "discord": "",
+      "spotify": "",
+      "org.kde.dolphin": "",
+      "blueman-manager": "",
+      "pavucontrol": "󱕂",
+      "nwg-look": "󰒓",
+      "qt5ct": "󰒓",
+      "qt6ct": "󰒓"
+    },
+    "format-icons": {
+      "active": "󰮯",
+      "special": "󱁂",
+      "default": "󰊠",
+      "urgent": "󰧵",
+      "empty": ""
+    },
+    "show-special": true,
+    "all-outputs": true
+  }
+}

@@ -23,5 +23,6 @@ in
     slurp
     wl-clipboard
     pavucontrol
+    networkmanagerapplet
   ];
 }
