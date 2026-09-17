@@ -32,7 +32,7 @@
   "modules-right": [
     "group/audio",
     "group/connections",
-    "battery",
+    "@BATTERY_MODULE@",
     "clock"
   ]
 }

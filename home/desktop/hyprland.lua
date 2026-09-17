@@ -28,6 +28,8 @@ hl.monitor({
     scale    = "auto",
 })
 
+@HDMI_MIRROR_RULE@
+
 
 ---------------------
 ---- MY PROGRAMS ----

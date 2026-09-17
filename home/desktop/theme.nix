@@ -3,6 +3,8 @@
 let
   palette = import ../core/palette.nix;
   inherit (config.lib.formats.rasi) mkLiteral;
+
+  surfaceContainer = "#23130c";
 in
 {
   gtk = {
@@ -31,21 +33,94 @@ in
 
   programs.rofi = {
     enable = true;
+    extraConfig = {
+      show-icons = true;
+    };
     theme = {
       "*" = {
-        background-color = mkLiteral palette.background;
-        foreground-color = mkLiteral palette.foreground;
-        border-color = mkLiteral palette.accent;
+        font = "JetBrainsMono Nerd Font 12";
+        background-color = mkLiteral "transparent";
+        text-color = mkLiteral palette.foreground;
+        margin = 0;
+        padding = 0;
+        spacing = 0;
       };
+
       "window" = {
-        border = mkLiteral "2px";
-        border-color = mkLiteral palette.accent;
-        border-radius = mkLiteral "8px";
+        location = mkLiteral "center";
+        width = 480;
         background-color = mkLiteral palette.background;
       };
+
+      "inputbar" = {
+        spacing = mkLiteral "8px";
+        padding = mkLiteral "8px";
+        background-color = mkLiteral surfaceContainer;
+      };
+
+      "prompt, entry, element-icon, element-text" = {
+        vertical-align = mkLiteral "0.5";
+      };
+
+      "prompt" = {
+        text-color = mkLiteral palette.accent;
+      };
+
+      "entry" = {
+        blink = false;
+      };
+
+      "textbox" = {
+        padding = mkLiteral "8px";
+        background-color = mkLiteral surfaceContainer;
+      };
+
+      "listview" = {
+        padding = mkLiteral "4px 0";
+        lines = 8;
+        columns = 1;
+        fixed-height = true;
+      };
+
+      "element" = {
+        padding = mkLiteral "8px";
+        spacing = mkLiteral "8px";
+      };
+
+      "element normal normal" = {
+        text-color = mkLiteral palette.foreground;
+      };
+
+      "element normal urgent" = {
+        text-color = mkLiteral palette.color3;
+      };
+
+      "element normal active" = {
+        text-color = mkLiteral palette.accent;
+      };
+
+      "element alternate active" = {
+        text-color = mkLiteral palette.accent;
+      };
+
       "element selected" = {
-        background-color = mkLiteral palette.accent;
         text-color = mkLiteral palette.background;
+      };
+
+      "element selected normal, element selected active" = {
+        background-color = mkLiteral palette.accent;
+      };
+
+      "element selected urgent" = {
+        background-color = mkLiteral palette.color3;
+      };
+
+      "element-icon" = {
+        size = mkLiteral "0.8em";
+      };
+
+      "element-text" = {
+        text-color = mkLiteral "inherit";
       };
     };
   };

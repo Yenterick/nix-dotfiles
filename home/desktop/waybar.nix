@@ -1,4 +1,4 @@
-{ ... }:
+{ osConfig, ... }:
 
 let
   palette = import ../core/palette.nix;
@@ -6,12 +6,18 @@ let
   # surface_container tones: background lifted toward color0 for the pill fills
   surfaceContainer = "#23130c";
   surfaceContainerHighest = "#2d1f14";
+
+  # Only arsene (the laptop) has a battery to report.
+  hasBattery = osConfig.networking.hostName == "arsene";
 in
 {
   programs.waybar.enable = true;
 
   xdg.configFile = {
-    "waybar/config.jsonc".source = ./waybar/config.jsonc;
+    "waybar/config.jsonc".text = builtins.replaceStrings
+      [ "\"@BATTERY_MODULE@\"," ]
+      [ (if hasBattery then "\"battery\"," else "") ]
+      (builtins.readFile ./waybar/config.jsonc);
     "waybar/style.css".source = ./waybar/style.css;
 
     "waybar/modules/groups.jsonc".source = ./waybar/modules/groups.jsonc;
