@@ -7,6 +7,7 @@
     ./modules/system/locale.nix
     ./modules/system/networking.nix
     ./modules/system/nix-settings.nix
+    ./modules/system/nix-ld.nix
     ./modules/system/packages.nix
     ./modules/system/users.nix
     ./modules/desktop/desktop.nix
