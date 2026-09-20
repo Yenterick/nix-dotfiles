@@ -44,6 +44,7 @@ in
     ./apps/spicetify.nix
     ./desktop/wallpaper.nix
     ./apps/fastfetch.nix
+    ./desktop/zen-browser.nix
   ];
 
   home.username = "yenterick";
@@ -51,7 +52,6 @@ in
 
   home.packages = [
     inputs.hyprmod.packages.${pkgs.stdenv.hostPlatform.system}.default
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   home.file.".config/hypr/hyprland.lua" = {
