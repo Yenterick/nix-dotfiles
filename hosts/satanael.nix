@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  imports = [ ../hardware-configuration.nix ];
+  imports = [ ./satanael-hardware.nix ];
 
   networking.hostName = "satanael";
 

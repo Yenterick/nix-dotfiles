@@ -3,8 +3,6 @@
 let
   palette = import ../core/palette.nix;
   inherit (config.lib.formats.rasi) mkLiteral;
-
-  surfaceContainer = "#23130c";
 in
 {
   gtk = {
@@ -55,7 +53,7 @@ in
       "inputbar" = {
         spacing = mkLiteral "8px";
         padding = mkLiteral "8px";
-        background-color = mkLiteral surfaceContainer;
+        background-color = mkLiteral palette.background;
       };
 
       "prompt, entry, element-icon, element-text" = {
@@ -72,7 +70,7 @@ in
 
       "textbox" = {
         padding = mkLiteral "8px";
-        background-color = mkLiteral surfaceContainer;
+        background-color = mkLiteral palette.background;
       };
 
       "listview" = {

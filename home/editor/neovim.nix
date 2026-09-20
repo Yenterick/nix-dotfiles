@@ -1,4 +1,4 @@
-{ pkgs, inputs, ... }:
+{ pkgs, lib, inputs, ... }:
 
 let
   starter = inputs.lazyvim-starter;
@@ -41,8 +41,8 @@ in
       end
 
       hi("Normal", { fg = "${palette.foreground}", bg = "${palette.background}" })
-      hi("NormalFloat", { fg = "${palette.foreground}", bg = "${palette.color0}" })
-      hi("FloatBorder", { fg = "${palette.color8}", bg = "${palette.color0}" })
+      hi("NormalFloat", { fg = "${palette.foreground}", bg = "${palette.background}" })
+      hi("FloatBorder", { fg = "${palette.color8}", bg = "${palette.background}" })
       hi("CursorLine", { bg = "${palette.color0}" })
       hi("CursorLineNr", { fg = "${palette.accent}", bold = true })
       hi("LineNr", { fg = "${palette.color8}" })
@@ -51,7 +51,7 @@ in
       hi("Search", { fg = "${palette.background}", bg = "${palette.accent}" })
       hi("IncSearch", { fg = "${palette.background}", bg = "${palette.color9}" })
       hi("MatchParen", { bg = "${palette.color6}", bold = true })
-      hi("Pmenu", { fg = "${palette.foreground}", bg = "${palette.color0}" })
+      hi("Pmenu", { fg = "${palette.foreground}", bg = "${palette.background}" })
       hi("PmenuSel", { fg = "${palette.background}", bg = "${palette.accent}" })
       hi("StatusLine", { fg = "${palette.foreground}", bg = "${palette.color0}" })
       hi("StatusLineNC", { fg = "${palette.color8}", bg = "${palette.color0}" })
@@ -119,4 +119,12 @@ in
     tree-sitter
     nerd-fonts.jetbrains-mono
   ];
+
+  # Nix store files keep a fixed mtime across generations, so Neovim's
+  # vim.loader bytecode cache (~/.cache/nvim/luac) never sees our nvim
+  # config files as "changed" and keeps serving stale compiled versions.
+  # Clear it on every switch so edits actually take effect.
+  home.activation.clearNvimLuaCache = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    rm -rf "$HOME/.cache/nvim/luac"
+  '';
 }

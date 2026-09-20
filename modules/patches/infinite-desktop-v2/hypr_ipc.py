@@ -4,6 +4,7 @@ import json
 import os
 import socket
 import threading
+import queue
 
 
 def _socket_path():
@@ -38,13 +39,41 @@ def dispatch(lua_expr, timeout=2):
     return _send(f'dispatch {lua_expr}', timeout=timeout)
 
 
-def dispatch_async(lua_expr):
-    def run():
+# infinite_desktop_core.py calls dispatch_async()/batch_async() up to ~60
+# times a second while panning. Spawning a new thread + new socket
+# connection per call piles up the instant the IPC socket lags even
+# slightly, starving the GIL and making the pan feel laggy. A single
+# worker draining a 1-slot queue keeps at most one send in flight and
+# collapses bursts to just the latest command (stale intermediate pan
+# positions are useless anyway).
+_async_queue = queue.Queue(maxsize=1)
+
+
+def _async_worker():
+    while True:
+        cmd = _async_queue.get()
         try:
-            _send(f'dispatch {lua_expr}', timeout=1)
+            _send(cmd, timeout=1)
         except Exception:
             pass
-    threading.Thread(target=run, daemon=True).start()
+
+
+threading.Thread(target=_async_worker, daemon=True).start()
+
+
+def _submit_async(cmd):
+    try:
+        _async_queue.get_nowait()
+    except queue.Empty:
+        pass
+    try:
+        _async_queue.put_nowait(cmd)
+    except queue.Full:
+        pass
+
+
+def dispatch_async(lua_expr):
+    _submit_async(f'dispatch {lua_expr}')
 
 
 def batch(lua_exprs, timeout=5):
@@ -56,12 +85,7 @@ def batch_async(lua_exprs):
     if not lua_exprs:
         return
     cmd = '[[BATCH]]' + ' ; '.join(f'dispatch {e}' for e in lua_exprs)
-    def run():
-        try:
-            _send(cmd, timeout=1)
-        except Exception:
-            pass
-    threading.Thread(target=run, daemon=True).start()
+    _submit_async(cmd)
 
 
 def toggle_floating_lua(address=None):

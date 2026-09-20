@@ -1,7 +1,7 @@
 { ... }:
 
 {
-  imports = [ ../hardware-configuration.nix ];
+  imports = [ ./arsene-hardware.nix ];
   networking.hostName = "arsene";
   hardware.graphics.enable = true;
 
