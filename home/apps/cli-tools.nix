@@ -17,6 +17,8 @@
     lazygit
     lazydocker
     lazysql
+    bluetui
+    csvlens
     brightnessctl
     playerctl
   ];
