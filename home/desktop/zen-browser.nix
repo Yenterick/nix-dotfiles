@@ -41,10 +41,19 @@ let
 
   userJs = pkgs.writeText "zen-user.js"
     (lib.concatStringsSep "\n" (lib.mapAttrsToList toPrefLine modPrefs) + "\n");
+  zenBrowser = pkgs.symlinkJoin {
+    name = "zen-browser-with-ffmpeg";
+    paths = [ inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/zen \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ pkgs.ffmpeg_8 pkgs.ffmpeg_9 ]}
+    '';
+  };
 in
 {
   home.packages = [
-    inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    zenBrowser
   ];
 
   # Zen profile directories are named "<random>.Default Profile" and can't be

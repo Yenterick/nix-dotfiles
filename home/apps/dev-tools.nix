@@ -13,6 +13,7 @@
     luajit
     rustc
     cargo
+    sqlx-cli
     rustfmt
     clippy
     rust-analyzer
