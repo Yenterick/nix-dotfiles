@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    nixpkgs-webkit-compat.url = "github:NixOS/nixpkgs/nixos-25.05";
+
+    epubworm.url = "github:xinghao-wu/epubworm";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";

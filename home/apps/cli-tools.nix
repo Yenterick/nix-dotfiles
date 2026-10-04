@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -21,5 +21,11 @@
     csvlens
     brightnessctl
     playerctl
+    pulsemixer
+    (callPackage ../../modules/packages/tfm-tui.nix { })
+    (callPackage ../../modules/packages/orpheus.nix { })
+    (callPackage ../../modules/packages/tanim.nix { })
+    (callPackage ../../modules/packages/dripfetch.nix { })
+    inputs.epubworm.packages.${stdenv.hostPlatform.system}.default
   ];
 }

@@ -11,7 +11,6 @@
         ln -sf $out/bin/discord $out/bin/Discord
       '';
     })
-    pkgs.kdePackages.dolphin
     (pkgs.callPackage ../../modules/packages/emeraldian.nix { })
   ];
 }
