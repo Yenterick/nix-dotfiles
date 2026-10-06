@@ -1,11 +1,5 @@
 { pkgs, inputs, ... }:
 
-let
-  webkitCompatPkgs = import inputs.nixpkgs-webkit-compat {
-    inherit (pkgs) system;
-    config.allowUnfree = true;
-  };
-in
 {
   imports = [
     ./modules/system/boot.nix
@@ -26,9 +20,6 @@ in
   programs.appimage = {
       enable = true;
       binfmt = true;
-      package = webkitCompatPkgs.appimage-run.override {
-        extraPkgs = pkgs: [ pkgs.webkitgtk_4_0 pkgs.libsoup_2_4 ];
-      };
   };
 
   system.stateVersion = "26.05";
