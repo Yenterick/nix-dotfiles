@@ -3,6 +3,10 @@
 let
   isArsene = osConfig.networking.hostName == "arsene";
 
+  # arsene uses Hyprland's default pointer sensitivity; satanael keeps the
+  # tuned value we already had.
+  mouseSensitivity = if isArsene then "0" else "-0.7";
+
   # Only arsene's HDMI port should mirror the internal display; satanael
   # (desktop, no internal display) should extend as normal.
   laptopDisplayRules =
@@ -57,8 +61,8 @@ in
   home.file.".config/hypr/hyprland.lua" = {
     force = true;
     text = builtins.replaceStrings
-      [ "@INFINITE_DESKTOP_V2@" "@HDMI_MIRROR_RULE@" ]
-      [ "${../modules/patches/infinite-desktop-v2}" laptopDisplayRules ]
+      [ "@INFINITE_DESKTOP_V2@" "@HDMI_MIRROR_RULE@" "@MOUSE_SENSITIVITY@" ]
+      [ "${../modules/patches/infinite-desktop-v2}" laptopDisplayRules mouseSensitivity ]
       (builtins.readFile ./desktop/hyprland.lua);
   };
 
