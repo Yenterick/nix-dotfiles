@@ -7,31 +7,41 @@ let
   # tuned value we already had.
   mouseSensitivity = if isArsene then "0" else "-0.7";
 
-  # Only arsene's HDMI port should mirror the internal display; satanael
+  # Only arsene's internal display should mirror the HDMI monitor; satanael
   # (desktop, no internal display) should extend as normal.
   laptopDisplayRules =
     if isArsene then ''
-      -- Mirror the internal display instead of extending onto it whenever a
-      -- monitor is connected via HDMI (this laptop's only HDMI port enumerates
-      -- as HDMI-A-1). The external output runs at its own native mode
-      -- (1920x1080 on a typical monitor/projector) and Hyprland stretches the
-      -- 1366x768 laptop image to fill it, so slides/presentations look full
-      -- size instead of a small laptop-sized picture.
+      -- When a monitor is plugged into HDMI (this laptop's only HDMI port
+      -- enumerates as HDMI-A-1) it becomes the real desktop at its native
+      -- resolution (1920x1080 on a typical monitor/projector) and the
+      -- 1366x768 laptop panel mirrors it, shrunk to fit. Closing the lid while
+      -- docked turns the panel off; with no external monitor, closing the lid
+      -- just suspends. lid-handler.sh applies the layout on start, hotplug and
+      -- lid events.
+      -- The laptop panel always runs at a ~1080p-sized desktop (2048x1152
+      -- logical; 0.6667 is the only scale below 1 Hyprland accepts for this
+      -- 1366x768 panel).
+      hl.monitor({
+          output   = "eDP-1",
+          mode     = "preferred",
+          position = "auto",
+          scale    = 0.666667,
+      })
+
       hl.monitor({
           output   = "HDMI-A-1",
           mode     = "preferred",
           position = "auto",
-          scale    = "auto",
-          mirror   = "eDP-1",
+          scale    = 1,
       })
 
-      -- Clamshell mode: closing the lid while docked to an HDMI monitor hands
-      -- the desktop over to that monitor at its own native resolution
-      -- (instead of mirroring a now-off internal panel); with no external
-      -- monitor connected, closing the lid just suspends as usual. Opening
-      -- the lid restores the internal panel and the default mirror above.
-      hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/lid-handler.sh close"), { locked = true })
-      hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd(os.getenv("HOME") .. "/.config/hypr/scripts/lid-handler.sh open"), { locked = true })''
+      local displayHandler = os.getenv("HOME") .. "/.config/hypr/scripts/lid-handler.sh"
+      hl.on("hyprland.start",  function () hl.exec_cmd(displayHandler .. " sync") end)
+      hl.on("monitor.added",   function () hl.exec_cmd(displayHandler .. " sync") end)
+      hl.on("monitor.removed", function () hl.exec_cmd(displayHandler .. " sync") end)
+
+      hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd(displayHandler .. " close"), { locked = true })
+      hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd(displayHandler .. " open"), { locked = true })''
     else "";
 in
 {
