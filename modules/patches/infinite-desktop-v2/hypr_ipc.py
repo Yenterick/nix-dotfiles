@@ -139,3 +139,66 @@ def resize_window_exact_lua(w, h, address):
 
 def resize_window_exact(w, h, address, timeout=2):
     return dispatch(resize_window_exact_lua(w, h, address), timeout=timeout)
+
+
+def eval_lua(code, timeout=2):
+    return _send(f'eval {code}', timeout=timeout)
+
+
+def focused_monitor_bounds(timeout=2):
+    """Logical (scale/rotation-aware) bounds of the focused monitor, i.e.
+    the same coordinate space window `at`/`size` are reported in."""
+    monitors = hyprctl_json(['monitors'], timeout=timeout) or []
+    m = next((m for m in monitors if m.get('focused')), monitors[0] if monitors else None)
+    if not m:
+        return {'left': 0, 'top': 0, 'right': 1920, 'bottom': 1080,
+                'width': 1920, 'height': 1080}
+    scale = m.get('scale') or 1
+    w, h = m['width'] / scale, m['height'] / scale
+    if m.get('transform', 0) % 2:
+        w, h = h, w
+    w, h = int(round(w)), int(round(h))
+    return {'left': m['x'], 'top': m['y'], 'right': m['x'] + w,
+            'bottom': m['y'] + h, 'width': w, 'height': h}
+
+
+# While panning, every frame re-targets each window's move animation, so the
+# windows trail behind the pointer ("drag and wait"). Turn the windowsMove
+# animation off for the duration of a pan and put it back afterwards.
+_FALLBACK_MOVE_ANIM = {'speed': 4, 'bezier': 'easeOutQuint'}
+_saved_move_anim = None
+_move_anim_lock = threading.Lock()
+
+
+def suspend_move_animation():
+    global _saved_move_anim
+    with _move_anim_lock:
+        if _saved_move_anim is not None:
+            return
+        _saved_move_anim = _read_and_disable_move_animation()
+
+
+def _read_and_disable_move_animation():
+    saved = dict(_FALLBACK_MOVE_ANIM)
+    try:
+        anims = hyprctl_json(['animations'], timeout=0.5) or [[]]
+        cur = next((a for a in anims[0] if a.get('name') == 'windowsMove'), None)
+        if cur and cur.get('overridden') and cur.get('enabled'):
+            saved = {'speed': cur['speed'], 'bezier': cur['bezier']}
+        eval_lua('hl.animation({ leaf = "windowsMove", enabled = false })', timeout=0.5)
+    except Exception:
+        pass
+    return saved
+
+
+def restore_move_animation():
+    global _saved_move_anim
+    with _move_anim_lock:
+        if _saved_move_anim is None:
+            return
+        a, _saved_move_anim = _saved_move_anim, None
+    try:
+        eval_lua(f'hl.animation({{ leaf = "windowsMove", enabled = true, '
+                 f'speed = {a["speed"]}, bezier = "{a["bezier"]}" }})', timeout=0.5)
+    except Exception:
+        pass

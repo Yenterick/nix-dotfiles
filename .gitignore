@@ -1,3 +1,4 @@
 result
 .direnv
 /hardware-configuration.nix
+__pycache__/

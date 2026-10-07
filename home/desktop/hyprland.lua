@@ -83,6 +83,10 @@ hl.animation({ leaf = "border",        enabled = true,  speed = 5.39, bezier = "
 hl.animation({ leaf = "windows",       enabled = true,  speed = 4.79, spring = "easy" })
 hl.animation({ leaf = "windowsIn",     enabled = true,  speed = 4.1,  spring = "easy",         style = "popin 87%" })
 hl.animation({ leaf = "windowsOut",    enabled = true,  speed = 1.49, bezier = "linear",       style = "popin 87%" })
+-- Fast ease-out glide for the infinite desktop "camera" (SUPER+arrows).
+-- infinite_desktop_core.py turns this off while panning with the mouse so
+-- windows follow the pointer 1:1 instead of trailing behind it.
+hl.animation({ leaf = "windowsMove",   enabled = true,  speed = 4,    bezier = "easeOutQuint" })
 hl.animation({ leaf = "fadeIn",        enabled = true,  speed = 1.73, bezier = "almostLinear" })
 hl.animation({ leaf = "fadeOut",       enabled = true,  speed = 1.46, bezier = "almostLinear" })
 hl.animation({ leaf = "fade",          enabled = true,  speed = 3.03, bezier = "quick" })
@@ -171,10 +175,15 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun"))
 hl.bind("Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+-- Infinite desktop: on a workspace with floating windows, SUPER+arrows
+-- focuses the neighbouring window and pans the canvas so it lands centred on
+-- screen; with only tiled windows it falls back to a normal focus move.
+local infiniteDesktop = "python3 @INFINITE_DESKTOP_V2@/"
+for _, dir in ipairs({ "left", "right", "up", "down" }) do
+    hl.bind(mainMod .. " + " .. dir,           hl.dsp.exec_cmd(infiniteDesktop .. "navigate_windows.py " .. dir))
+    hl.bind(mainMod .. " + SHIFT + " .. dir,   hl.dsp.exec_cmd(infiniteDesktop .. "move_window_tiled.py " .. dir), { repeating = true })
+    hl.bind(mainMod .. " + CTRL + " .. dir,    hl.dsp.exec_cmd(infiniteDesktop .. "resize_window.py " .. dir),     { repeating = true })
+end
 
 for i = 1, 10 do
     local key = i % 10

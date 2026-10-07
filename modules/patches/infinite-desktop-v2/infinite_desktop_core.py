@@ -5,7 +5,9 @@ import math
 from evdev import InputDevice, list_devices, ecodes
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from hypr_ipc import move_window_exact_lua, batch_async, hyprctl_json
+from hypr_ipc import (move_window_exact_lua, batch_async, hyprctl_json,
+                      focused_monitor_bounds, suspend_move_animation,
+                      restore_move_animation)
 
 speed = float(sys.argv[1]) if len(sys.argv) > 1 else 1.0
 
@@ -50,30 +52,9 @@ def read_inverted():
 
 def get_monitor_bounds():
     try:
-        monitors = hyprctl_json(['monitors'], timeout=0.1)
-        if monitors:
-            for m in monitors:
-                if m.get('focused', False):
-                    return {
-                        'left': m['x'],
-                        'right': m['x'] + m['width'],
-                        'top': m['y'],
-                        'bottom': m['y'] + m['height'],
-                        'width': m['width'],
-                        'height': m['height']
-                    }
-            m = monitors[0]
-            return {
-                'left': m['x'],
-                'right': m['x'] + m['width'],
-                'top': m['y'],
-                'bottom': m['y'] + m['height'],
-                'width': m['width'],
-                'height': m['height']
-            }
+        return focused_monitor_bounds(timeout=0.1)
     except:
-        pass
-    return {'left': 0, 'right': 1920, 'top': 0, 'bottom': 1080, 'width': 1920, 'height': 1080}
+        return {'left': 0, 'right': 1920, 'top': 0, 'bottom': 1080, 'width': 1920, 'height': 1080}
 
 def get_floating_windows(workspace_id):
     try:
@@ -169,6 +150,7 @@ def monitor_window_drag():
                     last_window_bounds = get_window_bounds(focused)
 
             elif not is_dragging and window_drag_active:
+                restore_move_animation()
                 window_drag_active = False
                 dragged_window_addr = None
                 last_window_bounds = None
@@ -202,10 +184,12 @@ def monitor_window_drag():
                         if pan_dx != 0 or pan_dy != 0:
                             ws = hyprctl_json(['activeworkspace'], timeout=0.1)
                             workspace_id = ws['id']
+                            suspend_move_animation()
                             pan_other_windows(dragged_window_addr, int(pan_dx), int(pan_dy), workspace_id)
 
                     last_window_bounds = current_bounds
                 else:
+                    restore_move_animation()
                     window_drag_active = False
                     dragged_window_addr = None
 
@@ -445,8 +429,9 @@ threading.Thread(target=monitor_window_drag, daemon=True).start()
 print("Infinite Desktop active (automatic device detection)", flush=True)
 print("Super+click: drag window (pushes others aside at the edge)", flush=True)
 print("Super+Alt+mouse: pan the whole desktop", flush=True)
-print("Super+arrows: navigate via hyprland bind", flush=True)
-print("Super+Shift+arrows: move active window via hyprland bind", flush=True)
+print("Super+arrows: focus neighbour window and centre the camera on it", flush=True)
+print("Super+Shift+arrows: move active window", flush=True)
+print("Super+Ctrl+arrows: resize active floating window", flush=True)
 
 _cached_workspace_id = None
 _last_workspace_check = 0
@@ -466,6 +451,10 @@ def get_cached_workspace_id():
 
 _pan_positions = None
 _pan_was_active = False
+# Sub-pixel leftovers carried between frames so slow touchpad motion
+# still pans instead of being rounded away every 16ms.
+_res_x = 0.0
+_res_y = 0.0
 
 while True:
     time.sleep(0.016)
@@ -478,12 +467,19 @@ while True:
         acc_y = 0.0
 
     if not active_drag:
+        if _pan_was_active:
+            restore_move_animation()
         _pan_positions = None
         _pan_was_active = False
+        _res_x = _res_y = 0.0
         continue
 
+    dx += _res_x
+    dy += _res_y
     idx = int(round(dx))
     idy = int(round(dy))
+    _res_x = dx - idx
+    _res_y = dy - idy
 
     try:
         workspace_id = get_cached_workspace_id()
@@ -500,6 +496,10 @@ while True:
 
         if idx == 0 and idy == 0:
             continue
+
+        if not _pan_was_active:
+            suspend_move_animation()
+            _pan_was_active = True
 
         exprs = []
         for addr, pos in _pan_positions.items():

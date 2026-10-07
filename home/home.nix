@@ -13,11 +13,13 @@ let
     if isArsene then ''
       -- Mirror the internal display instead of extending onto it whenever a
       -- monitor is connected via HDMI (this laptop's only HDMI port enumerates
-      -- as HDMI-A-1). The mode is pinned to eDP-1's own mode so the two
-      -- outputs share identical timings during mirroring.
+      -- as HDMI-A-1). The external output runs at its own native mode
+      -- (1920x1080 on a typical monitor/projector) and Hyprland stretches the
+      -- 1366x768 laptop image to fill it, so slides/presentations look full
+      -- size instead of a small laptop-sized picture.
       hl.monitor({
           output   = "HDMI-A-1",
-          mode     = "1366x768@60",
+          mode     = "preferred",
           position = "auto",
           scale    = "auto",
           mirror   = "eDP-1",

@@ -15,7 +15,8 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from hypr_ipc import hyprctl_json, move_focus, move_window_exact_lua, focus_window, batch_async
+from hypr_ipc import (hyprctl_json, move_focus, move_window_exact_lua, focus_window_lua,
+                      batch, focused_monitor_bounds)
 
 PROTECTED_APPS = ['brave-browser', 'chromium', 'chromium-browser', 'google-chrome',
                   'firefox', 'firefoxdeveloperedition', 'librewolf', 'vivaldi',
@@ -29,11 +30,8 @@ def movefocus(direction):
 
 
 def get_monitor_center():
-    monitors = hyprctl_json(["monitors"]) or []
-    for m in monitors:
-        if m.get("focused"):
-            return m["x"] + m["width"] // 2, m["y"] + m["height"] // 2
-    return 960, 540
+    m = focused_monitor_bounds()
+    return m["left"] + m["width"] // 2, m["top"] + m["height"] // 2
 
 
 def get_window_center(w):
@@ -122,10 +120,11 @@ def pan_to_window(floating, target_addr, center_x, center_y):
         ny = w["at"][1] + dy
         exprs.append(move_window_exact_lua(int(nx), int(ny), w["address"]))
 
-    batch_async(exprs)
-
+    # Synchronous: this script exits right away, which would kill the
+    # async worker thread before it sent anything.
     if not is_protected(target):
-        focus_window(target_addr)
+        exprs.append(focus_window_lua(target_addr))
+    batch(exprs)
 
 
 def main():

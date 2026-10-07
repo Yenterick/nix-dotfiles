@@ -12,22 +12,13 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from hypr_ipc import hyprctl_json, move_window_exact_lua, batch_async, dispatch
+from hypr_ipc import hyprctl_json, move_window_exact_lua, batch, dispatch, focused_monitor_bounds
 
 STEP = 90
 
 
 def get_monitor_bounds():
-    monitors = hyprctl_json(["monitors"]) or []
-    for m in monitors:
-        if m.get("focused"):
-            return {
-                "left":   m["x"],
-                "right":  m["x"] + m["width"],
-                "top":    m["y"],
-                "bottom": m["y"] + m["height"],
-            }
-    return {"left": 0, "right": 1920, "top": 0, "bottom": 1080}
+    return focused_monitor_bounds()
 
 
 def get_floating_windows(workspace_id):
@@ -97,7 +88,7 @@ def main():
             ox = w["at"][0] - dx
             oy = w["at"][1] - dy
             exprs.append(move_window_exact_lua(ox, oy, w["address"]))
-        batch_async(exprs)
+        batch(exprs)
     else:
         dispatch(move_window_exact_lua(new_x, new_y, addr))
 
