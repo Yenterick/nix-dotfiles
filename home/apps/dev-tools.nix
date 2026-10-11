@@ -14,6 +14,8 @@
     rustc
     cargo
     sqlx-cli
+    sqlite
+    libpq
     diesel-cli
     pnpm
     rustfmt
