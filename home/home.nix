@@ -61,6 +61,7 @@ in
     ./desktop/wallpaper.nix
     ./apps/fastfetch.nix
     ./desktop/zen-browser.nix
+    ./desktop/tfm.nix
   ];
 
   home.username = "yenterick";

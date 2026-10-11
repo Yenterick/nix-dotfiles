@@ -14,6 +14,8 @@
     rustc
     cargo
     sqlx-cli
+    diesel-cli
+    pnpm
     rustfmt
     clippy
     rust-analyzer

@@ -25,7 +25,7 @@ in
 
   qt = {
     enable = true;
-    platformTheme.name = "gtk3"; # Qt apps (e.g. dolphin) follow the GTK dark theme
+    platformTheme.name = "gtk3"; # Qt apps follow the GTK dark theme
     style.name = "adwaita-dark";
   };
 

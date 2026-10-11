@@ -9,7 +9,7 @@ hl.monitor({
 
 
 local terminal    = "kitty"
-local fileManager = "dolphin"
+local fileManager = "kitty --class tfm --title tfm -e tfm"
 local menu        = "hyprlauncher"
 
 
