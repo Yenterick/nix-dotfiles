@@ -7,8 +7,8 @@ let
   # tuned value we already had.
   mouseSensitivity = if isArsene then "0" else "-0.7";
 
-  # Only arsene's internal display should mirror the HDMI monitor; satanael
-  # (desktop, no internal display) should extend as normal.
+  # arsene's internal display mirrors the HDMI monitor; on satanael the HDMI
+  # TV mirrors the main DP monitor.
   laptopDisplayRules =
     if isArsene then ''
       -- When a monitor is plugged into HDMI (this laptop's only HDMI port
@@ -42,7 +42,32 @@ let
 
       hl.bind("switch:on:Lid Switch", hl.dsp.exec_cmd(displayHandler .. " close"), { locked = true })
       hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd(displayHandler .. " open"), { locked = true })''
-    else "";
+    else ''
+      -- satanael: the HP monitor on DP-3 is the main desktop and the LG TV on
+      -- HDMI-A-1 always mirrors it.
+      hl.monitor({
+          output   = "DP-3",
+          mode     = "preferred",
+          position = "0x0",
+          scale    = 1,
+      })
+
+      hl.monitor({
+          output   = "HDMI-A-1",
+          mode     = "1920x1080@60",
+          position = "auto",
+          scale    = 1,
+          mirror   = "DP-3",
+      })
+
+      -- If the HP monitor is turned off (it disconnects), mirror-handler.sh
+      -- un-mirrors the TV so it keeps working as a normal desktop, and
+      -- mirrors it again once the HP comes back.
+      local mirrorHandler = os.getenv("HOME") .. "/.config/hypr/scripts/mirror-handler.sh"
+      hl.on("hyprland.start",  function () hl.exec_cmd(mirrorHandler) end)
+      hl.on("monitor.added",   function () hl.exec_cmd(mirrorHandler) end)
+      hl.on("monitor.removed", function () hl.exec_cmd(mirrorHandler) end)
+      hl.on("config.reloaded", function () hl.exec_cmd(mirrorHandler) end)'';
 in
 {
   imports = [
@@ -87,6 +112,12 @@ in
   home.file.".config/hypr/scripts/lid-handler.sh" = lib.mkIf isArsene {
     force = true;
     source = ./desktop/scripts/lid-handler.sh;
+    executable = true;
+  };
+
+  home.file.".config/hypr/scripts/mirror-handler.sh" = lib.mkIf (!isArsene) {
+    force = true;
+    source = ./desktop/scripts/mirror-handler.sh;
     executable = true;
   };
 

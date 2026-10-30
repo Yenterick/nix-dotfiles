@@ -5,8 +5,6 @@ hl.monitor({
     scale    = "auto",
 })
 
-@HDMI_MIRROR_RULE@
-
 
 local terminal    = "kitty"
 local fileManager = "kitty --class tfm --title tfm -e tfm"
@@ -250,3 +248,7 @@ do
         dofile(guiConfig)
     end
 end
+
+-- Per-host display rules go last so they win over anything HyprMod saved in
+-- hyprland-gui.lua.
+@HDMI_MIRROR_RULE@

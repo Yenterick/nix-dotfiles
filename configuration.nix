@@ -13,6 +13,7 @@
     ./modules/system/users.nix
     ./modules/desktop/desktop.nix
     ./modules/desktop/virtualisation.nix
+    ./modules/desktop/audio.nix
   ];
 
   nixpkgs.config.allowUnfree = true;

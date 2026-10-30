@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   home.packages = [
+    pkgs.obs-studio
     (pkgs.symlinkJoin {
       name = "discord";
       paths = [ pkgs.discord ];
