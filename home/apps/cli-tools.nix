@@ -27,6 +27,8 @@
     (callPackage ../../modules/packages/orpheus.nix { })
     (callPackage ../../modules/packages/tanim.nix { })
     (callPackage ../../modules/packages/dripfetch.nix { })
+    (callPackage ../../modules/packages/shoin.nix { })
+    (callPackage ../../modules/packages/sqlmux.nix { })
     inputs.epubworm.packages.${stdenv.hostPlatform.system}.default
   ];
 }
