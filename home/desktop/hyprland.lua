@@ -171,6 +171,7 @@ hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("python3 @INFINITE_DESKTOP_V2@/floati
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("rofi -show drun"))
 
 hl.bind("Print", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
+hl.bind(mainMod .. " + CTRL + S", hl.dsp.exec_cmd("grim -g \"$(slurp)\" - | wl-copy"))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 
 -- Infinite desktop: on a workspace with floating windows, SUPER+arrows
