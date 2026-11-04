@@ -2,6 +2,7 @@
 {
   home.packages = [
     pkgs.obs-studio
+    pkgs.parsec-bin
     (pkgs.symlinkJoin {
       name = "discord";
       paths = [ pkgs.discord ];
