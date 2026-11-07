@@ -6,7 +6,12 @@
 
     nixpkgs-webkit-compat.url = "github:NixOS/nixpkgs/nixos-25.05";
 
-    epubworm.url = "github:xinghao-wu/epubworm";
+    bookokrat.url = "github:bugzmanov/bookokrat";
+
+    rmcl = {
+      url = "github:objz/rmcl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     home-manager = {
       url = "github:nix-community/home-manager";

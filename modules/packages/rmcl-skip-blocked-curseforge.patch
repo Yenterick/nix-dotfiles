@@ -1,0 +1,73 @@
+diff --git a/src/instance/import/curseforge.rs b/src/instance/import/curseforge.rs
+index 136a7ba..1008386 100644
+--- a/src/instance/import/curseforge.rs
++++ b/src/instance/import/curseforge.rs
+@@ -162,6 +162,9 @@ async fn download_files(
+     progress::set_action(format!("Downloading mods... 0/{total}"));
+     let completed = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+     let slots = std::sync::Arc::new(tokio::sync::Semaphore::new(10));
++    // files whose authors disabled third-party downloads; skipped and listed
++    // instead of failing the whole import
++    let blocked = std::sync::Arc::new(std::sync::Mutex::new(Vec::<String>::new()));
+     let mut tasks = tokio::task::JoinSet::new();
+     for mut version in versions {
+         let client = client.clone();
+@@ -169,10 +172,32 @@ async fn download_files(
+         let mods_dir = mods_dir.clone();
+         let completed = completed.clone();
+         let slots = slots.clone();
++        let blocked = blocked.clone();
+         tasks.spawn(async move {
+             let _permit = slots.acquire_owned().await?;
+-            crate::net::curseforge::ensure_download_url(&client, &api_key, &mut version).await?;
+-            crate::net::modrinth::download_version_file(&client, &version, &mods_dir).await?;
++            match crate::net::curseforge::ensure_download_url(&client, &api_key, &mut version).await {
++                Ok(()) => {
++                    crate::net::modrinth::download_version_file(&client, &version, &mods_dir)
++                        .await?;
++                }
++                Err(error) if error.to_string().contains("third-party launchers") => {
++                    let filename = version
++                        .files
++                        .first()
++                        .map(|file| file.filename.clone())
++                        .unwrap_or_default();
++                    tracing::warn!(
++                        "Skipping CurseForge-blocked file {filename} (project {}, file {})",
++                        version.project_id,
++                        version.id
++                    );
++                    blocked.lock().unwrap().push(format!(
++                        "{}\t{}\t{}\thttps://www.curseforge.com/projects/{}",
++                        version.project_id, version.id, filename, version.project_id
++                    ));
++                }
++                Err(error) => return Err(error.into()),
++            }
+             let finished = completed.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1;
+             progress::set_action(format!("Downloading mods... {finished}/{total}"));
+             Ok::<(), Box<dyn std::error::Error + Send + Sync>>(())
+@@ -181,6 +206,23 @@ async fn download_files(
+     while let Some(result) = tasks.join_next().await {
+         result??;
+     }
++    // take the list so the guard is dropped before the await below
++    let blocked = std::mem::take(&mut *blocked.lock().unwrap());
++    if !blocked.is_empty() {
++        let list = minecraft_dir.join("blocked-mods.tsv");
++        let mut contents = String::from("project_id\tfile_id\tfilename\tpage\n");
++        for line in blocked.iter() {
++            contents.push_str(line);
++            contents.push('\n');
++        }
++        tokio::fs::write(&list, contents).await?;
++        tracing::warn!(
++            "{} file(s) must be downloaded manually into {}; see {}",
++            blocked.len(),
++            mods_dir.display(),
++            list.display()
++        );
++    }
+     Ok(())
+ }
+ 
