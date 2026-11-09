@@ -13,6 +13,9 @@
     openFirewall = true;
   };
 
+  # Minecraft server (~/Documents/minecraft-server) for LAN play
+  networking.firewall.allowedTCPPorts = [ 25565 ];
+
   environment.systemPackages = with pkgs; [
     mangohud
     gamescope
