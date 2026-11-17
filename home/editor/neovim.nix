@@ -24,6 +24,7 @@ in
     ".config/nvim/lua/plugins/example.lua".source = "${starter}/lua/plugins/example.lua";
     ".config/nvim/lua/plugins/completion.lua".source = ./lazyvim/lua/plugins/completion.lua;
     ".config/nvim/lua/plugins/web.lua".source = ./lazyvim/lua/plugins/web.lua;
+    ".config/nvim/lua/plugins/nix.lua".source = ./lazyvim/lua/plugins/nix.lua;
     ".config/nvim/stylua.toml".source = "${starter}/stylua.toml";
     ".config/nvim/.neoconf.json".source = "${starter}/.neoconf.json";
 
@@ -117,6 +118,8 @@ in
   home.packages = with pkgs; [
     neovim
     tree-sitter
+    nil
+    nixfmt
     nerd-fonts.jetbrains-mono
   ];
 

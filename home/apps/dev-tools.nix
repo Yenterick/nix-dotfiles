@@ -18,6 +18,9 @@
     libpq
     diesel-cli
     pnpm
+    jdk
+    maven
+    gradle
     rustfmt
     clippy
     rust-analyzer
