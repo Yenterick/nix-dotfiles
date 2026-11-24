@@ -10,6 +10,7 @@ let
       # downloads; skip them and list them in <instance>/minecraft/blocked-mods.tsv
       (inputs.rmcl.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [ ../../modules/packages/rmcl-skip-blocked-curseforge.patch ];
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
       }))
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
