@@ -4,8 +4,8 @@ let
   palette = import ../core/palette.nix;
 
   # surface_container tones: background lifted toward color0 for the pill fills
-  surfaceContainer = "#23130c";
-  surfaceContainerHighest = "#2d1f14";
+  surfaceContainer = "#1E120E";
+  surfaceContainerHighest = "#2E1C17";
 
   # Only arsene (the laptop) has a battery to report.
   hasBattery = osConfig.networking.hostName == "arsene";

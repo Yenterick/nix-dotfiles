@@ -1,24 +1,26 @@
+# Palette sampled from home/desktop/wallpapers/wallpaper.jpg
+# (night city, warm skin tones, red lips, pink eyeshadow, brass railing)
 rec {
-  background = "#130000";
-  foreground = "#C0B8B2";
-  cursor = "#A29C8C";
+  background = "#0B0605";
+  foreground = "#E6D3C6";
+  cursor = "#EFA98D";
 
-  color0 = "#3B2F1E";
-  color1 = "#7D7589";
-  color2 = "#797767";
-  color3 = "#744E65";
-  color4 = "#3B5545";
-  color5 = "#4A4E58";
-  color6 = "#66584E";
-  color7 = "#9D9289";
-  color8 = "#6E6660";
-  color9 = "#807293";
-  color10 = "#848067";
-  color11 = "#875574";
-  color12 = "#3C5E49";
-  color13 = "#4F5563";
-  color14 = "#746355";
-  color15 = "#9D9289";
+  color0 = "#2B1912";
+  color1 = "#B8433F";
+  color2 = "#7F8456";
+  color3 = "#A8506A";
+  color4 = "#6E6A86";
+  color5 = "#8E5A7E";
+  color6 = "#5E4A40";
+  color7 = "#C8B2A4";
+  color8 = "#6B5246";
+  color9 = "#D9605A";
+  color10 = "#C9A15F";
+  color11 = "#C25B76";
+  color12 = "#8E9A6B";
+  color13 = "#8A86A6";
+  color14 = "#C08A6E";
+  color15 = "#EAD8CC";
 
   accent = color11;
 }
