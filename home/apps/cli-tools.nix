@@ -11,6 +11,7 @@ let
       (inputs.rmcl.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
         patches = (old.patches or [ ]) ++ [ ../../modules/packages/rmcl-skip-blocked-curseforge.patch ];
         nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ pkgs.pkg-config ];
+        buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.zstd ];
       }))
     ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
