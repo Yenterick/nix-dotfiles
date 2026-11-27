@@ -3,6 +3,7 @@
   home.packages = [
     pkgs.obs-studio
     pkgs.parsec-bin
+    pkgs.obsidian # draw Excalidraw canvases; emeraldian renders them in the terminal
     (pkgs.symlinkJoin {
       name = "discord";
       paths = [ pkgs.discord ];
